@@ -13,7 +13,7 @@ class FactionController extends AbstractController
 
     public function __construct(private EntityManagerInterface $entityManager)
     {
-    }
+    }    
 
     #[Route('/faction', name: 'faction_list')]
     public function index(): JsonResponse
@@ -23,5 +23,11 @@ class FactionController extends AbstractController
             ->getRepository(Faction::class)
             ->findAll()
         );
+    }
+
+    #[Route('/faction/{id}', name: 'a_faction')]
+    public function detail(Faction $faction): JsonResponse
+    {
+        return $this->json($faction);
     }
 }

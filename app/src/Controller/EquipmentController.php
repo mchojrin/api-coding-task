@@ -24,4 +24,10 @@ class EquipmentController extends AbstractController
                 ->findAll()
         );
     }
+
+    #[Route('/equipment/{id}', name: 'an_equipment')]
+    public function detail(Equipment $equipment): JsonResponse
+    {
+        return $this->json($equipment);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Serializer;
 use App\Entity\Character;
 use App\Entity\Faction;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -12,7 +13,8 @@ class FactionNormalizer implements NormalizerInterface
 {
     public function __construct(
         #[Autowire(service: 'serializer.normalizer.object')]
-        private readonly NormalizerInterface $normalizer
+        private readonly NormalizerInterface $normalizer,
+        private readonly UrlGeneratorInterface $urlGenerator,
     )
     {
     }
@@ -23,7 +25,13 @@ class FactionNormalizer implements NormalizerInterface
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['characters']
         ]));
 
-        $data['characters'] = array_map(fn (Character $character) => $character->getName(), $faction->getCharacters()->toArray());
+        $data['characters'] = array_map(
+            fn (Character $character) =>
+            $this->urlGenerator->generate(
+                "a_character", ['id' => $character->getId()]
+            ),
+            $faction->getCharacters()->toArray()
+        );
 
         return $data;
     }

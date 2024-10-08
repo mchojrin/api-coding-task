@@ -24,4 +24,10 @@ class CharacterController extends AbstractController
                 ->findAll()
         );
     }
+
+    #[Route('/character/{id}', name: 'a_character')]
+    public function detail(Character $character): JsonResponse
+    {
+        return $this->json($character);
+    }
 }
