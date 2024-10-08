@@ -6,6 +6,7 @@ use App\Entity\Character;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CharacterController extends AbstractController
@@ -15,6 +16,7 @@ class CharacterController extends AbstractController
     }
 
     #[Route('/character', name: 'character_list')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function index(): JsonResponse
     {
         return $this->json(
@@ -26,6 +28,7 @@ class CharacterController extends AbstractController
     }
 
     #[Route('/character/{id}', name: 'a_character')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function detail(Character $character): JsonResponse
     {
         return $this->json($character);

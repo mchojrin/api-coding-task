@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
 class FactionController extends AbstractController
@@ -17,6 +18,7 @@ class FactionController extends AbstractController
     }
 
     #[Route('/faction', name: 'faction_list', methods: ['GET'])]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function index(): JsonResponse
     {
         return $this->json($this
@@ -77,6 +79,7 @@ class FactionController extends AbstractController
     }
 
     #[Route('/faction/{id}', name: 'a_faction')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function detail(Faction $faction): JsonResponse
     {
         return $this->json($faction);

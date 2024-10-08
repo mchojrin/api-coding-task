@@ -6,6 +6,7 @@ use App\Entity\Equipment;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EquipmentController extends AbstractController
@@ -15,6 +16,7 @@ class EquipmentController extends AbstractController
     }
 
     #[Route('/equipment', name: 'equipment_list')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function index(): JsonResponse
     {
         return $this->json(
@@ -26,6 +28,7 @@ class EquipmentController extends AbstractController
     }
 
     #[Route('/equipment/{id}', name: 'an_equipment')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function detail(Equipment $equipment): JsonResponse
     {
         return $this->json($equipment);
