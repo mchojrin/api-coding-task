@@ -89,4 +89,9 @@ class Faction
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->faction_name;
+    }
 }
