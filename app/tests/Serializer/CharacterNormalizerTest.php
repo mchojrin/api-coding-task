@@ -7,6 +7,7 @@ use App\Entity\Equipment;
 use App\Entity\Faction;
 use App\Serializer\CharacterNormalizer;
 use DateTimeImmutable;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
@@ -28,45 +29,14 @@ class CharacterNormalizerTest extends TestCase
     public function shouldNormalizeACharacter(Character $aCharacter): void
     {
         $baseNormalizer = $this->createMock(NormalizerInterface::class);
-        $baseNormalizer
-            ->expects(self::once())
-            ->method('normalize')
-            ->willReturn([
-                'id' => $aCharacter->getId(),
-                'name' => $aCharacter->getName(),
-                'birth_date' => $aCharacter->getBirthDate()->format('Y-m-d'),
-                'kingdom' => $aCharacter->getKingdom(),
-            ]);
+        $this->configureBaseNormalizer($baseNormalizer, $aCharacter);
 
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $urlGenerator
-            ->expects($this->exactly(2))
-            ->method('generate')
-            ->willReturnCallback(function (string $routeName, array $params) use ($aCharacter) {
-                if ($routeName == EQUIPMENT_DETAIL_ROUTE && $params == [ID_FIELD => $aCharacter->getEquipment()->getId()]) {
-                    return EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId();
-                }
+        $this->configureUrlGenerator($urlGenerator, $aCharacter);
 
-                if ($routeName == FACTION_DETAIL_ROUTE && $params == [ID_FIELD => $aCharacter->getFaction()->getId()]) {
+        $characterNormalizer = new CharacterNormalizer($baseNormalizer,$urlGenerator);
 
-                    return FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId();
-                }
-            });
-
-        $characterNormalizer = new CharacterNormalizer(
-            $baseNormalizer,
-            $urlGenerator
-        );
-
-        $this->assertEquals(
-            [
-                'id' => $aCharacter->getId(),
-                'name' => $aCharacter->getName(),
-                'birth_date' => $aCharacter->getBirthDate()->format("Y-m-d"),
-                'kingdom' => $aCharacter->getKingdom(),
-                'equipment' => EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId(),
-                'faction' => FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId(),
-            ], $characterNormalizer->normalize($aCharacter));
+        $this->assertEquals($this->buildExpectedReturn($aCharacter), $characterNormalizer->normalize($aCharacter));
     }
 
     public static function characterProvider(): array
@@ -94,5 +64,61 @@ class CharacterNormalizerTest extends TestCase
                     )
                 ],
             ];
+    }
+
+    /**
+     * @param MockObject $baseNormalizer
+     * @param Character $aCharacter
+     * @return void
+     */
+    protected function configureBaseNormalizer(MockObject $baseNormalizer, Character $aCharacter): void
+    {
+        $baseNormalizer
+            ->expects(self::once())
+            ->method('normalize')
+            ->willReturn([
+                'id' => $aCharacter->getId(),
+                'name' => $aCharacter->getName(),
+                'birth_date' => $aCharacter->getBirthDate()->format('Y-m-d'),
+                'kingdom' => $aCharacter->getKingdom(),
+            ]);
+    }
+
+    /**
+     * @param MockObject $urlGenerator
+     * @param Character $aCharacter
+     * @return void
+     */
+    protected function configureUrlGenerator(MockObject $urlGenerator, Character $aCharacter): void
+    {
+        $urlGenerator
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->willReturnCallback(function (string $routeName, array $params) use ($aCharacter) {
+                if ($routeName == EQUIPMENT_DETAIL_ROUTE && $params == [ID_FIELD => $aCharacter->getEquipment()->getId()]) {
+                    return EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId();
+                }
+
+                if ($routeName == FACTION_DETAIL_ROUTE && $params == [ID_FIELD => $aCharacter->getFaction()->getId()]) {
+
+                    return FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId();
+                }
+            });
+    }
+
+    /**
+     * @param Character $aCharacter
+     * @return array
+     */
+    protected function buildExpectedReturn(Character $aCharacter): array
+    {
+        return [
+            'id' => $aCharacter->getId(),
+            'name' => $aCharacter->getName(),
+            'birth_date' => $aCharacter->getBirthDate()->format("Y-m-d"),
+            'kingdom' => $aCharacter->getKingdom(),
+            'equipment' => EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId(),
+            'faction' => FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId(),
+        ];
     }
 }
