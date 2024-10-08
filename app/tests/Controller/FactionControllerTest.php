@@ -55,7 +55,7 @@ class FactionControllerTest extends WebTestCase
      */
     public function shouldAllowDeletingFactions(): void
     {
-        $toDelete = new Faction( faction_name: 'Delete me', description: 'Faction to be deleted');
+        $toDelete = new Faction(faction_name: 'Delete me', description: 'Faction to be deleted');
 
         $this->entityManager->persist($toDelete);
         $this->entityManager->flush();
@@ -69,5 +69,29 @@ class FactionControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $this->assertEmpty($this->factionRepository->findOneBy(['id' => $toDelete->getId()]));
+    }
+
+    /**
+     * @return void
+     * @throws \Doctrine\ORM\Exception\ORMException
+     * @test
+     */
+    public function shouldAllowUpdatingFactions(): void
+    {
+        $toUpdate = new Faction(faction_name: 'Change me', description: 'Faction to be updated');
+
+        $this->entityManager->persist($toUpdate);
+        $this->entityManager->flush();
+        $this->assertNotEmpty($this->factionRepository->find($toUpdate->getId()));
+
+        $this->client->request(
+            'PATCH',
+            '/faction/' . $toUpdate->getId(),
+            content: json_encode(['faction_name' => "Changed"])
+        );
+
+        $this->assertResponseIsSuccessful();
+        $this->entityManager->refresh($toUpdate);
+        $this->assertEquals("Changed", $toUpdate->getFactionName());
     }
 }

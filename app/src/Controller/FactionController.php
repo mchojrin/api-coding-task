@@ -54,6 +54,28 @@ class FactionController extends AbstractController
         return $this->json([]);
     }
 
+    #[Route('/faction/{id}', name: 'update_faction', methods: ['PATCH'])]
+    public function update(Faction $toUpdate, Request $request): JsonResponse
+    {
+        $changes = json_decode($request->getContent(), true);
+
+        foreach ($changes as $key => $value) {
+            switch ($key) {
+                case "faction_name":
+                    $toUpdate->setFactionName($value);
+                    break;
+                case "description":
+                    $toUpdate->setDescription($value);
+                    break;
+            }
+        }
+
+        $this->entityManager->persist($toUpdate);
+        $this->entityManager->flush();
+
+        return $this->json([]);
+    }
+
     #[Route('/faction/{id}', name: 'a_faction')]
     public function detail(Faction $faction): JsonResponse
     {
