@@ -47,7 +47,7 @@ class CharacterControllerTest extends WebTestCase
         $lookingFor = [
             'id' => $character->getId(),
             'name' => $character->getName(),
-            'birthDate' => $character->getBirthDate()->format('Y-m-d'),
+            'birth_date' => $character->getBirthDate()->format('Y-m-d'),
             'kingdom' => $character->getKingdom(),
             'equipment' => '/equipment/'.$character->getEquipment()->getId(),
             'faction' => '/faction/'.$character->getFaction()->getId(),
