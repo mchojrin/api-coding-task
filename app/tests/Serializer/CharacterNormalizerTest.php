@@ -12,57 +12,44 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+const EQUIPMENT_DETAIL_ROUTE = "an_equipment";
+const ID_FIELD = 'id';
+const EQUIPMENT_DETAIL_URL_PREFIX = '/equipment/';
+const FACTION_DETAIL_ROUTE = "a_faction";
+const FACTION_DETAIL_URL_PREFIX = '/faction/';
 class CharacterNormalizerTest extends TestCase
 {
     /**
+     * @param $aCharacter
      * @throws ExceptionInterface
      * @test
+     * @dataProvider characterProvider
      */
-    public function shouldNormalizeACharacter(): void
+    public function shouldNormalizeACharacter(Character $aCharacter): void
     {
-        $birth_date = new DateTimeImmutable("1977-12-22");
-
-        $aCharacter = new Character(
-            10,
-            "Mauro",
-            $birth_date,
-            "My Kingdom",
-            new Equipment(
-                9,
-                "My equipment",
-                "EquipmentType",
-                "Amazon"
-            )
-            , new Faction(
-                7,
-                "My Faction",
-                "Faction description",
-            )
-        );
         $baseNormalizer = $this->createMock(NormalizerInterface::class);
         $baseNormalizer
             ->expects(self::once())
             ->method('normalize')
             ->willReturn([
-                'id' => 10,
-                'name' => 'Mauro',
-                'birth_date' => $birth_date->format("Y-m-d"),
-                'kingdom' => 'My Kingdom',
+                'id' => $aCharacter->getId(),
+                'name' => $aCharacter->getName(),
+                'birth_date' => $aCharacter->getBirthDate()->format('Y-m-d'),
+                'kingdom' => $aCharacter->getKingdom(),
             ]);
-        $urlGenerator = $this
-            ->createMock(UrlGeneratorInterface::class);
 
+        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $urlGenerator
             ->expects($this->exactly(2))
             ->method('generate')
-            ->willReturnCallback(function (string $routeName, array $params) {
-                if ($routeName == "an_equipment" && $params == ['id' => 9]) {
-                    return '/equipment/9';
+            ->willReturnCallback(function (string $routeName, array $params) use ($aCharacter) {
+                if ($routeName == EQUIPMENT_DETAIL_ROUTE && $params == [ID_FIELD => $aCharacter->getEquipment()->getId()]) {
+                    return EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId();
                 }
 
-                if ($routeName == "a_faction" && $params == ['id' => 7]) {
+                if ($routeName == FACTION_DETAIL_ROUTE && $params == [ID_FIELD => $aCharacter->getFaction()->getId()]) {
 
-                    return '/faction/7';
+                    return FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId();
                 }
             });
 
@@ -71,13 +58,41 @@ class CharacterNormalizerTest extends TestCase
             $urlGenerator
         );
 
-        $this->assertEquals([
-            'id' => 10,
-            'name' => 'Mauro',
-            'birth_date' => $birth_date->format("Y-m-d"),
-            'kingdom' => 'My Kingdom',
-            'equipment' => '/equipment/9',
-            'faction' => '/faction/7',
-        ], $characterNormalizer->normalize($aCharacter));
+        $this->assertEquals(
+            [
+                'id' => $aCharacter->getId(),
+                'name' => $aCharacter->getName(),
+                'birth_date' => $aCharacter->getBirthDate()->format("Y-m-d"),
+                'kingdom' => $aCharacter->getKingdom(),
+                'equipment' => EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId(),
+                'faction' => FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId(),
+            ], $characterNormalizer->normalize($aCharacter));
+    }
+
+    public static function characterProvider(): array
+    {
+        return
+            [
+                [
+                    new Character(
+                        1,
+                        "Mauro",
+                        new DateTimeImmutable("1977-12-22"),
+                        "Westeros",
+                        new Equipment(2, "Valyrian Steel Sword", "sword", "Valyrian forgers"),
+                        new Faction(3, "Night's Watch", "Guards of the northern wall")
+                    )
+                ],
+                [
+                    new Character(
+                        6,
+                        "Luke Skywalker",
+                        new DateTimeImmutable("2097-10-12"),
+                        "Tatooine",
+                        new Equipment(6, "Light Saber", "sword", "Obiwan Kenoby"),
+                        new Faction(7, "Jedis", "Peace keepers of the Galaxy")
+                    )
+                ],
+            ];
     }
 }
