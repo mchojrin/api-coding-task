@@ -28,8 +28,12 @@ class Equipment
     #[ORM\OneToMany(targetEntity: Character::class, mappedBy: 'equipment')]
     private Collection $characters;
 
-    public function __construct()
+    public function __construct(int $id, string $name, string $type, string $made_by)
     {
+        $this->id = $id;
+        $this->name = $name;
+        $this->type = $type;
+        $this->made_by = $made_by;
         $this->characters = new ArrayCollection();
     }
 

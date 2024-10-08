@@ -11,6 +11,16 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: '`characters`')]
 class Character
 {
+    public function __construct(int $id, string $name, DateTimeInterface $birth_date, string $kingdom, Equipment $equipment, Faction $faction)
+    {
+        $this->id = $id;
+        $this->name = $name;
+        $this->birth_date = $birth_date;
+        $this->equipment = $equipment;
+        $this->faction = $faction;
+        $this->kingdom = $kingdom;
+    }
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
