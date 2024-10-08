@@ -26,10 +26,10 @@ class Faction
     #[ORM\OneToMany(targetEntity: Character::class, mappedBy: 'faction')]
     private Collection $characters;
 
-    public function __construct(int $id, string $factionName, string $description)
+    public function __construct(string $faction_name, string $description, ?int $id = null)
     {
         $this->id = $id;
-        $this->faction_name = $factionName;
+        $this->faction_name = $faction_name;
         $this->description = $description;
         $this->characters = new ArrayCollection();
     }

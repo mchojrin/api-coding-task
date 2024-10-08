@@ -50,7 +50,7 @@ class CharacterNormalizerTest extends TestCase
                         new DateTimeImmutable("1977-12-22"),
                         "Westeros",
                         new Equipment(2, "Valyrian Steel Sword", "sword", "Valyrian forgers"),
-                        new Faction(3, "Night's Watch", "Guards of the northern wall")
+                        new Faction("Night's Watch", "Guards of the northern wall", 3)
                     )
                 ],
                 [
@@ -60,7 +60,7 @@ class CharacterNormalizerTest extends TestCase
                         new DateTimeImmutable("2097-10-12"),
                         "Tatooine",
                         new Equipment(6, "Light Saber", "sword", "Obiwan Kenoby"),
-                        new Faction(7, "Jedis", "Peace keepers of the Galaxy")
+                        new Faction("Jedis", "Peace keepers of the Galaxy", 7)
                     )
                 ],
             ];
