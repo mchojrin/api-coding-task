@@ -2,25 +2,36 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Character;
 use App\Entity\Faction;
+use App\Entity\User;
 use App\Repository\FactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class FactionControllerTest extends WebTestCase
 {
     private readonly FactionRepository $factionRepository;
     private readonly EntityManagerInterface $entityManager;
+    private string $token;
 
+    /**
+     */
     protected function setUp(): void
     {
         $this->client = static::createClient();
 
         $this->entityManager = self::getContainer()->get('doctrine')->getManager();
         $this->factionRepository = $this->entityManager->getRepository(Faction::class);
+
+        $this->createUser();
     }
 
+    protected function tearDown(): void
+    {
+        $this->removeUser();
+        parent::tearDown();
+    }
 
     /**
      * @test
@@ -35,7 +46,10 @@ class FactionControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             '/faction',
-            content: json_encode($newFactionData)
+            server: [
+                'HTTP_X-AUTH-TOKEN' => $this->token,
+            ],
+            content: json_encode($newFactionData),
         );
 
         $this->assertResponseIsSuccessful();
@@ -64,7 +78,10 @@ class FactionControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            '/faction/' . $toDelete->getId()
+            '/faction/' . $toDelete->getId(),
+            server: [
+                'HTTP_X-AUTH-TOKEN' => $this->token,
+            ],
         );
 
         $this->assertResponseIsSuccessful();
@@ -72,8 +89,7 @@ class FactionControllerTest extends WebTestCase
     }
 
     /**
-     * @return void
-     * @throws \Doctrine\ORM\Exception\ORMException
+     * @throws ORMException
      * @test
      */
     public function shouldAllowUpdatingFactions(): void
@@ -87,11 +103,33 @@ class FactionControllerTest extends WebTestCase
         $this->client->request(
             'PATCH',
             '/faction/' . $toUpdate->getId(),
+            server: [
+                'HTTP_X-AUTH-TOKEN' => $this->token,
+            ],
             content: json_encode(['faction_name' => "Changed"])
         );
 
         $this->assertResponseIsSuccessful();
         $this->entityManager->refresh($toUpdate);
         $this->assertEquals("Changed", $toUpdate->getFactionName());
+    }
+
+    protected function createUser(): void
+    {
+        $this->token = bin2hex(random_bytes(36));
+        $user = new User();
+        $user->setToken($this->token);
+        $user->setRoles(['ROLE_USER']);
+        $user->setEmail("test@test.com");
+        $user->setPassword("password");
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+
+    protected function removeUser(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['token' => $this->token]);
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
     }
 }
