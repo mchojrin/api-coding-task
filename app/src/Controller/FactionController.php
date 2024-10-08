@@ -15,7 +15,7 @@ class FactionController extends AbstractController
     {
     }    
 
-    #[Route('/faction', name: 'faction_list')]
+    #[Route('/faction', name: 'faction_list', methods: ['GET'])]
     public function index(): JsonResponse
     {
         return $this->json($this
