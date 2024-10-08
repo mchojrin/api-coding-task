@@ -45,6 +45,15 @@ class FactionController extends AbstractController
             ]);
     }
 
+    #[Route('/faction/{id}', name: 'delete_faction', methods: ['DELETE'])]
+    public function delete(Faction $toDelete): JsonResponse
+    {
+        $this->entityManager->remove($toDelete);
+        $this->entityManager->flush();
+
+        return $this->json([]);
+    }
+
     #[Route('/faction/{id}', name: 'a_faction')]
     public function detail(Faction $faction): JsonResponse
     {
