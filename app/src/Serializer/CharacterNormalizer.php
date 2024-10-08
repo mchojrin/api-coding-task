@@ -18,14 +18,15 @@ class CharacterNormalizer implements NormalizerInterface
     {
     }
 
-    public function normalize($character, ?string $format = null, array $context = []): array
+    public function normalize($object, ?string $format = null, array $context = []): array
     {
-        $data = $this->normalizer->normalize($character, $format, array_merge($context, [
+        $data = $this->normalizer->normalize($object, $format, array_merge($context, [
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['faction', 'equipment']
         ]));
 
-        $data['equipment'] = $this->urlGenerator->generate("an_equipment", [ 'id' => $character->getEquipment()->getId()]);
-        $data['faction'] = $this->urlGenerator->generate("a_faction", [ 'id' => $character->getFaction()->getId()]);
+        $data['birthDate'] = $object->getBirthDate()->format('Y-m-d');
+        $data['equipment'] = $this->urlGenerator->generate("an_equipment", [ 'id' => $object->getEquipment()->getId()]);
+        $data['faction'] = $this->urlGenerator->generate("a_faction", [ 'id' => $object->getFaction()->getId()]);
 
         return $data;
     }
