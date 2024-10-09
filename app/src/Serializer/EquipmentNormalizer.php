@@ -25,6 +25,8 @@ class EquipmentNormalizer implements NormalizerInterface
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['characters']
         ]));
 
+        $data['made_by'] = $equipment->getMadeBy();
+        unset($data['madeBy']);
         $data['characters'] = array_map(
             fn (Character $character) =>
             $this->urlGenerator->generate(

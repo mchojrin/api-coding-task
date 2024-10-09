@@ -25,6 +25,8 @@ class FactionNormalizer implements NormalizerInterface
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['characters']
         ]));
 
+        $data['faction_name'] = $faction->getFactionName();
+        unset($data['factionName']);
         $data['characters'] = array_map(
             fn (Character $character) =>
             $this->urlGenerator->generate(
