@@ -49,7 +49,7 @@ class CharacterNormalizerTest extends TestCase
                         "Mauro",
                         new DateTimeImmutable("1977-12-22"),
                         "Westeros",
-                        new Equipment(2, "Valyrian Steel Sword", "sword", "Valyrian forgers"),
+                        new Equipment("Valyrian Steel Sword", "sword", "Valyrian forgers", 2),
                         new Faction("Night's Watch", "Guards of the northern wall", 3)
                     )
                 ],
@@ -59,7 +59,7 @@ class CharacterNormalizerTest extends TestCase
                         "Luke Skywalker",
                         new DateTimeImmutable("2097-10-12"),
                         "Tatooine",
-                        new Equipment(6, "Light Saber", "sword", "Obiwan Kenoby"),
+                        new Equipment("Light Saber", "sword", "Obiwan Kenoby", 6),
                         new Faction("Jedis", "Peace keepers of the Galaxy", 7)
                     )
                 ],
