@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: '`characters`')]
 class Character
 {
-    public function __construct(int $id, string $name, DateTimeInterface $birth_date, string $kingdom, Equipment $equipment, Faction $faction)
+    public function __construct(string $name, DateTimeInterface $birth_date, string $kingdom, Equipment $equipment, Faction $faction, ?int $id = null)
     {
         $this->id = $id;
         $this->name = $name;

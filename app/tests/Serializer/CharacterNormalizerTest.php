@@ -13,11 +13,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-const EQUIPMENT_DETAIL_ROUTE = "equipments_detail";
-const ID_FIELD = 'id';
-const EQUIPMENT_DETAIL_URL_PREFIX = '/equipments/';
-const FACTION_DETAIL_ROUTE = "factions_detail";
-const FACTION_DETAIL_URL_PREFIX = '/factions/';
 class CharacterNormalizerTest extends TestCase
 {
     /**
@@ -45,22 +40,22 @@ class CharacterNormalizerTest extends TestCase
             [
                 [
                     new Character(
-                        1,
                         "Mauro",
                         new DateTimeImmutable("1977-12-22"),
                         "Westeros",
                         new Equipment("Valyrian Steel Sword", "sword", "Valyrian forgers", 2),
-                        new Faction("Night's Watch", "Guards of the northern wall", 3)
+                        new Faction("Night's Watch", "Guards of the northern wall", 3),
+                        1
                     )
                 ],
                 [
                     new Character(
-                        6,
                         "Luke Skywalker",
                         new DateTimeImmutable("2097-10-12"),
                         "Tatooine",
                         new Equipment("Light Saber", "sword", "Obiwan Kenoby", 6),
-                        new Faction("Jedis", "Peace keepers of the Galaxy", 7)
+                        new Faction("Jedis", "Peace keepers of the Galaxy", 7),
+                        6
                     )
                 ],
             ];
@@ -95,13 +90,13 @@ class CharacterNormalizerTest extends TestCase
             ->expects($this->exactly(2))
             ->method('generate')
             ->willReturnCallback(function (string $routeName, array $params) use ($aCharacter) {
-                if ($routeName == EQUIPMENT_DETAIL_ROUTE && $params == [ID_FIELD => $aCharacter->getEquipment()->getId()]) {
-                    return EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId();
+                if ($routeName == self::EQUIPMENT_DETAIL_ROUTE && $params == [self::ID_FIELD => $aCharacter->getEquipment()->getId()]) {
+                    return self::EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId();
                 }
 
-                if ($routeName == FACTION_DETAIL_ROUTE && $params == [ID_FIELD => $aCharacter->getFaction()->getId()]) {
+                if ($routeName == self::FACTION_DETAIL_ROUTE && $params == [self::ID_FIELD => $aCharacter->getFaction()->getId()]) {
 
-                    return FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId();
+                    return self::FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId();
                 }
 
                 return null;
@@ -119,8 +114,8 @@ class CharacterNormalizerTest extends TestCase
             'name' => $aCharacter->getName(),
             'birth_date' => $aCharacter->getBirthDate()->format("Y-m-d"),
             'kingdom' => $aCharacter->getKingdom(),
-            'equipment' => EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId(),
-            'faction' => FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId(),
+            'equipment' => self::EQUIPMENT_DETAIL_URL_PREFIX . $aCharacter->getEquipment()->getId(),
+            'faction' => self::FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId(),
         ];
     }
 }
