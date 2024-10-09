@@ -8,6 +8,7 @@ use App\Repository\FactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class FactionControllerTest extends WebTestCase
 {
@@ -34,6 +35,29 @@ class FactionControllerTest extends WebTestCase
         parent::tearDown();
     }
 
+    /**
+     * @test
+     */
+    public function shouldReturnCompleteFactionList(): void
+    {
+        $this->client->request(
+            'GET',
+            self::BASE_URI
+        );
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseFormatSame("json");
+
+        $jsonResponse = $this->client->getResponse()->getContent();
+
+        $obtainedArray = json_decode($jsonResponse, true);
+
+        $factions = $this->factionRepository->findAll();
+        foreach ($factions as $faction) {
+            $this->assertTrue($this->in_array($faction, $obtainedArray));
+        }
+    }
     /**
      * @test
      */
@@ -132,5 +156,22 @@ class FactionControllerTest extends WebTestCase
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['token' => $this->token]);
         $this->entityManager->remove($user);
         $this->entityManager->flush();
+    }
+
+    private function in_array(Faction $needle, array $haystack): bool
+    {
+        foreach ($haystack as $item) {
+            if ($this->hasExpectedProperties($item, $needle)) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasExpectedProperties(mixed $item, Faction $needle): bool
+    {
+        return $item['id'] === $needle->getId() && $item['description'] === $item->getDescription() && $item['faction_name'] === $needle->getFactionName();
     }
 }
