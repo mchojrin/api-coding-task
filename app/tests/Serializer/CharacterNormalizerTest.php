@@ -15,8 +15,14 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class CharacterNormalizerTest extends TestCase
 {
+    private const EQUIPMENT_DETAIL_ROUTE = "equipments_detail";
+    private const EQUIPMENT_DETAIL_URL_PREFIX = '/equipments/';
+    private const ID_FIELD = 'id';
+    private const FACTION_DETAIL_ROUTE = "factions_detail";
+    private const FACTION_DETAIL_URL_PREFIX = '/factions/';
+
     /**
-     * @param $aCharacter
+     * @param Character $aCharacter
      * @throws ExceptionInterface
      * @test
      * @dataProvider characterProvider
