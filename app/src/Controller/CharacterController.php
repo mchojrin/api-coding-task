@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/characters', name: 'character_', methods: ['GET'])]
+#[Route('/characters', name: 'characters_', methods: ['GET'])]
 class CharacterController extends AbstractController
 {
     public function __construct(private readonly EntityManagerInterface $entityManager)

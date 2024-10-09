@@ -28,7 +28,7 @@ class FactionNormalizer implements NormalizerInterface
         $data['characters'] = array_map(
             fn (Character $character) =>
             $this->urlGenerator->generate(
-                "a_character", ['id' => $character->getId()]
+                "characters_detail", ['id' => $character->getId()]
             ),
             $faction->getCharacters()->toArray()
         );
