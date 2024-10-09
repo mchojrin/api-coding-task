@@ -26,8 +26,8 @@ class CharacterNormalizer implements NormalizerInterface
 
         unset($data['birthDate']);
         $data['birth_date'] = $object->getBirthDate()->format('Y-m-d');
-        $data['equipment'] = $this->urlGenerator->generate("an_equipment", [ 'id' => $object->getEquipment()->getId()]);
-        $data['faction'] = $this->urlGenerator->generate("a_faction", [ 'id' => $object->getFaction()->getId()]);
+        $data['equipment'] = $this->urlGenerator->generate("equipments_detail", [ 'id' => $object->getEquipment()->getId()]);
+        $data['faction'] = $this->urlGenerator->generate("factions_detail", [ 'id' => $object->getFaction()->getId()]);
 
         return $data;
     }

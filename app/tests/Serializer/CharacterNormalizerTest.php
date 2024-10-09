@@ -13,11 +13,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-const EQUIPMENT_DETAIL_ROUTE = "an_equipment";
+const EQUIPMENT_DETAIL_ROUTE = "equipments_detail";
 const ID_FIELD = 'id';
-const EQUIPMENT_DETAIL_URL_PREFIX = '/equipment/';
-const FACTION_DETAIL_ROUTE = "a_faction";
-const FACTION_DETAIL_URL_PREFIX = '/faction/';
+const EQUIPMENT_DETAIL_URL_PREFIX = '/equipments/';
+const FACTION_DETAIL_ROUTE = "factions_detail";
+const FACTION_DETAIL_URL_PREFIX = '/factions/';
 class CharacterNormalizerTest extends TestCase
 {
     /**
@@ -103,6 +103,8 @@ class CharacterNormalizerTest extends TestCase
 
                     return FACTION_DETAIL_URL_PREFIX . $aCharacter->getFaction()->getId();
                 }
+
+                return null;
             });
     }
 

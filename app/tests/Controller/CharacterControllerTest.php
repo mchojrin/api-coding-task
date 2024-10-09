@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CharacterControllerTest extends WebTestCase
 {
+    const BASE_URI = '/characters/';
     private readonly CharacterRepository $characterRepository;
     private readonly KernelBrowser $client;
 
@@ -27,7 +28,10 @@ class CharacterControllerTest extends WebTestCase
      */
     public function shouldReturnCompleteCharacterList(): void
     {
-        $this->client->request('GET', '/character');
+        $this->client->request(
+            'GET',
+            self::BASE_URI
+        );
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -38,21 +42,19 @@ class CharacterControllerTest extends WebTestCase
         $obtainedArray = json_decode($jsonResponse, true);
         $characters = $this->characterRepository->findAll();
         foreach ($characters as $character) {
-            $this->assertTrue($this->contains($obtainedArray, $character));
+            $this->assertTrue($this->in_array($character, $obtainedArray));
         }
     }
 
-    private function contains(array $obtainedArray, Character $character): bool
+    private function in_array(Character $needle, array $haystack): bool
     {
-        $lookingFor = [
-            'id' => $character->getId(),
-            'name' => $character->getName(),
-            'birth_date' => $character->getBirthDate()->format('Y-m-d'),
-            'kingdom' => $character->getKingdom(),
-            'equipment' => '/equipment/'.$character->getEquipment()->getId(),
-            'faction' => '/faction/'.$character->getFaction()->getId(),
-            ];
-
-        return in_array($lookingFor, $obtainedArray);
+        return in_array([
+            'id' => $needle->getId(),
+            'name' => $needle->getName(),
+            'birth_date' => $needle->getBirthDate()->format('Y-m-d'),
+            'kingdom' => $needle->getKingdom(),
+            'equipment' => '/equipments/'.$needle->getEquipment()->getId(),
+            'faction' => '/factions/'.$needle->getFaction()->getId(),
+            ], $haystack);
     }
 }

@@ -10,15 +10,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/faction')]
+#[Route('/factions', name: 'factions_')]
 class FactionController extends AbstractController
 {
 
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
     }
 
-    #[Route('/', name: 'faction_list', methods: ['GET'])]
+    #[Route('/', name: 'index', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function index(): JsonResponse
     {
@@ -29,7 +29,7 @@ class FactionController extends AbstractController
         );
     }
 
-    #[Route('/', name: 'create_faction', methods: ['POST'])]
+    #[Route('/', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         $requestBody = json_decode($request->getContent(), true);
@@ -48,7 +48,7 @@ class FactionController extends AbstractController
             ]);
     }
 
-    #[Route('/{id}', name: 'delete_faction', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(Faction $toDelete): JsonResponse
     {
         $this->entityManager->remove($toDelete);
@@ -57,7 +57,7 @@ class FactionController extends AbstractController
         return $this->json([]);
     }
 
-    #[Route('/{id}', name: 'update_faction', methods: ['PATCH'])]
+    #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     public function update(Faction $toUpdate, Request $request): JsonResponse
     {
         $changes = json_decode($request->getContent(), true);
@@ -79,7 +79,7 @@ class FactionController extends AbstractController
         return $this->json([]);
     }
 
-    #[Route('/{id}', name: 'a_faction', methods: ['GET'])]
+    #[Route('/{id}', name: 'detail', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function detail(Faction $faction): JsonResponse
     {

@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class EquipmentControllerTest extends WebTestCase
 {
+    private const BASE_URI = '/equipments/';
     private readonly EquipmentRepository $equipmentRepository;
     private readonly EntityManagerInterface $entityManager;
     private string $token;
@@ -48,7 +49,7 @@ class EquipmentControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            '/equipment',
+            self::BASE_URI,
             server: [
                 'HTTP_X-AUTH-TOKEN' => $this->token,
             ],
@@ -85,7 +86,7 @@ class EquipmentControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            '/equipment/' . $toDelete->getId(),
+            self::BASE_URI . $toDelete->getId(),
             server: [
                 'HTTP_X-AUTH-TOKEN' => $this->token,
             ],
@@ -113,7 +114,7 @@ class EquipmentControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            '/equipment/' . $toUpdate->getId(),
+            self::BASE_URI . $toUpdate->getId(),
             server: [
                 'HTTP_X-AUTH-TOKEN' => $this->token,
             ],

@@ -9,14 +9,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/characters', name: 'character_', methods: ['GET'])]
 class CharacterController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
     }
 
-    #[Route('/character', name: 'character_list')]
-    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
+    #[Route('/', name: 'index', methods: ['GET'])]
+    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function index(): JsonResponse
     {
         return $this->json(
@@ -27,8 +28,8 @@ class CharacterController extends AbstractController
         );
     }
 
-    #[Route('/character/{id}', name: 'a_character')]
-    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
+    #[Route('/{id}', name: 'detail', methods: ['GET'])]
+    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function detail(Character $character): JsonResponse
     {
         return $this->json($character);

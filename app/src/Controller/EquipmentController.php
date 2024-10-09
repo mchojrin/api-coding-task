@@ -10,14 +10,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/equipment')]
+#[Route('/equipments', name: 'equipments_')]
 class EquipmentController extends AbstractController
 {
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {
     }
 
-    #[Route('/', name: 'equipment_list', methods: ['GET'])]
+    #[Route('/', name: 'index', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function index(): JsonResponse
     {
@@ -29,7 +29,7 @@ class EquipmentController extends AbstractController
         );
     }
 
-    #[Route('/', name: 'equipment_list', methods: ['POST'])]
+    #[Route('/', name: 'create', methods: ['POST'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function create(Request $request): JsonResponse
     {
@@ -50,14 +50,14 @@ class EquipmentController extends AbstractController
             ]);
     }
 
-    #[Route('/{id}', name: 'an_equipment', methods: ['GET'])]
+    #[Route('/{id}', name: 'detail', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function detail(Equipment $equipment): JsonResponse
     {
         return $this->json($equipment);
     }
 
-    #[Route('/{id}', name: 'delete_equipment', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(Equipment $toDelete): JsonResponse
     {
         $this->entityManager->remove($toDelete);
@@ -66,7 +66,7 @@ class EquipmentController extends AbstractController
         return $this->json([]);
     }
 
-    #[Route('/{id}', name: 'update_equipment', methods: ['PATCH'])]
+    #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     public function update(Equipment $toUpdate, Request $request): JsonResponse
     {
         $changes = json_decode($request->getContent(), true);

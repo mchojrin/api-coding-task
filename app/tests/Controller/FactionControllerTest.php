@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class FactionControllerTest extends WebTestCase
 {
+    const BASE_URI = '/factions/';
     private readonly FactionRepository $factionRepository;
     private readonly EntityManagerInterface $entityManager;
     private string $token;
@@ -45,7 +46,7 @@ class FactionControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            '/faction',
+            self::BASE_URI,
             server: [
                 'HTTP_X-AUTH-TOKEN' => $this->token,
             ],
@@ -78,7 +79,7 @@ class FactionControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            '/faction/' . $toDelete->getId(),
+            self::BASE_URI . $toDelete->getId(),
             server: [
                 'HTTP_X-AUTH-TOKEN' => $this->token,
             ],
@@ -102,7 +103,7 @@ class FactionControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            '/faction/' . $toUpdate->getId(),
+            self::BASE_URI . $toUpdate->getId(),
             server: [
                 'HTTP_X-AUTH-TOKEN' => $this->token,
             ],
