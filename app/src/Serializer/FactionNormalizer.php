@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
+const CHARACTERS_DETAIL_ROUTE = "characters_detail";
 class FactionNormalizer implements NormalizerInterface
 {
     public function __construct(
@@ -30,7 +31,7 @@ class FactionNormalizer implements NormalizerInterface
         $data['characters'] = array_map(
             fn (Character $character) =>
             $this->urlGenerator->generate(
-                "characters_detail", ['id' => $character->getId()]
+                CHARACTERS_DETAIL_ROUTE, ['id' => $character->getId()]
             ),
             $faction->getCharacters()->toArray()
         );
