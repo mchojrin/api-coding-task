@@ -4,6 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Equipment;
 use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Attributes\Delete;
+use OpenApi\Attributes\Get;
+use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Parameter;
+use OpenApi\Attributes\Patch;
+use OpenApi\Attributes\Post;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\RequestBody;
+use OpenApi\Attributes\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +28,16 @@ class EquipmentController extends AbstractController
 
     #[Route('/', name: 'index', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
+    #[Get(
+        path: '/equipments',
+        operationId: 'listEquipments',
+        description: 'List of all equipments in the database',
+        summary: 'List of all equipments',
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ]
+    )]
     public function index(): JsonResponse
     {
         return $this->json(
@@ -30,7 +49,28 @@ class EquipmentController extends AbstractController
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
-    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
+    #[Post(
+        path: '/',
+        operationId: 'createEquipment',
+        description: 'Create a new equipment',
+        summary: 'Create a new equipment',
+        requestBody: new RequestBody(
+            required: true,
+            content: new JsonContent(
+                required: ["name", "type", "made_by"],
+                properties: [
+                    new Property(property: "name", type: "string", example: "Hammer"),
+                    new Property(property: "made_by", type: "string", example: "Mike the maker"),
+                    new Property(property: "type", type: "string", example: "Tools"),
+                ],
+            )
+        ),
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ],
+    )
+    ]
     public function create(Request $request): JsonResponse
     {
         $requestBody = json_decode($request->getContent(), true);
@@ -52,12 +92,40 @@ class EquipmentController extends AbstractController
 
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
+    #[Get(
+        path: '/{id}',
+        operationId: 'getEquipment',
+        description: 'Create a new equipment',
+        summary: 'Create a new equipment',
+        parameters: [
+            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1"),
+        ],
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ]
+    )
+    ]
     public function detail(Equipment $equipment): JsonResponse
     {
         return $this->json($equipment);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[Delete(
+        path: '/',
+        operationId: 'deleteEquipment',
+        description: 'Delete an equipment',
+        summary: 'Delete a new equipment',
+        parameters: [
+            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1"),
+        ],
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ],
+    )
+    ]
     public function delete(Equipment $toDelete): JsonResponse
     {
         $this->entityManager->remove($toDelete);
@@ -67,6 +135,30 @@ class EquipmentController extends AbstractController
     }
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
+    #[Patch(
+        path: '/{id}',
+        operationId: 'updateEquipment',
+        description: 'Update an equipment',
+        summary: 'Update an equipment',
+        requestBody: new RequestBody(
+            required: true,
+            content: new JsonContent(
+                required: [],
+                properties: [
+                    new Property(property: "name", type: "string", example: "Hammer"),
+                    new Property(property: "made_by", type: "string", example: "Mike the maker"),
+                    new Property(property: "type", type: "string", example: "Tools"),
+                ],
+            )
+        ),
+        parameters: [
+            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1"),
+        ],
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ],
+    )]
     public function update(Equipment $toUpdate, Request $request): JsonResponse
     {
         $changes = json_decode($request->getContent(), true);
