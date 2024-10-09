@@ -170,8 +170,12 @@ class FactionControllerTest extends WebTestCase
         return false;
     }
 
-    private function hasExpectedProperties(mixed $item, Faction $needle): bool
+    private function hasExpectedProperties(array $item, Faction $needle): bool
     {
-        return $item['id'] === $needle->getId() && $item['description'] === $item->getDescription() && $item['faction_name'] === $needle->getFactionName();
+        return
+            $item['id'] === $needle->getId() &&
+            $item['description'] === $needle->getDescription() &&
+            $item['faction_name'] === $needle->getFactionName()
+            ;
     }
 }
