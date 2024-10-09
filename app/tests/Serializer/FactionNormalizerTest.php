@@ -19,6 +19,16 @@ class FactionNormalizerTest extends TestCase
     private const CHARACTER_DETAIL_ROUTE = "characters_detail";
     private const CHARACTER_DETAIL_URL_PREFIX = "/characters/detail/";
     private const ID_FIELD = 'id';
+    private NormalizerInterface $baseNormalizer;
+    private UrlGeneratorInterface $urlGenerator;
+    private FactionNormalizer $factionNormalizer;
+
+    protected function setUp(): void
+    {
+        $this->baseNormalizer = $this->createMock(NormalizerInterface::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $this->factionNormalizer = new FactionNormalizer($this->baseNormalizer, $this->urlGenerator);
+    }
 
     /**
      * @param Faction $aFaction
@@ -29,15 +39,10 @@ class FactionNormalizerTest extends TestCase
      */
     public function shouldNormalizeAFaction(Faction $aFaction): void
     {
-        $baseNormalizer = $this->createMock(NormalizerInterface::class);
-        $this->configureBaseNormalizer($baseNormalizer, $aFaction);
+        $this->configureBaseNormalizer($this->baseNormalizer, $aFaction);
+        $this->configureUrlGenerator($this->urlGenerator, $aFaction);
 
-        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->configureUrlGenerator($urlGenerator, $aFaction);
-
-        $factionNormalizer = new FactionNormalizer($baseNormalizer, $urlGenerator);
-
-        $this->assertEquals($this->buildExpectedReturn($aFaction), $factionNormalizer->normalize($aFaction));
+        $this->assertEquals($this->buildExpectedReturn($aFaction), $this->factionNormalizer->normalize($aFaction));
     }
 
     private function configureBaseNormalizer(MockObject $baseNormalizer, Faction $aFaction): void
