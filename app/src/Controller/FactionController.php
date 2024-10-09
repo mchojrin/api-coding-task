@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/faction')]
 class FactionController extends AbstractController
 {
 
@@ -17,8 +18,8 @@ class FactionController extends AbstractController
     {
     }
 
-    #[Route('/faction', name: 'faction_list', methods: ['GET'])]
-    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
+    #[Route('/', name: 'faction_list', methods: ['GET'])]
+    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function index(): JsonResponse
     {
         return $this->json($this
@@ -28,7 +29,7 @@ class FactionController extends AbstractController
         );
     }
 
-    #[Route('/faction', name: 'create_faction', methods: ['POST'])]
+    #[Route('/', name: 'create_faction', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         $requestBody = json_decode($request->getContent(), true);
@@ -47,7 +48,7 @@ class FactionController extends AbstractController
             ]);
     }
 
-    #[Route('/faction/{id}', name: 'delete_faction', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'delete_faction', methods: ['DELETE'])]
     public function delete(Faction $toDelete): JsonResponse
     {
         $this->entityManager->remove($toDelete);
@@ -56,7 +57,7 @@ class FactionController extends AbstractController
         return $this->json([]);
     }
 
-    #[Route('/faction/{id}', name: 'update_faction', methods: ['PATCH'])]
+    #[Route('/{id}', name: 'update_faction', methods: ['PATCH'])]
     public function update(Faction $toUpdate, Request $request): JsonResponse
     {
         $changes = json_decode($request->getContent(), true);
@@ -78,8 +79,8 @@ class FactionController extends AbstractController
         return $this->json([]);
     }
 
-    #[Route('/faction/{id}', name: 'a_faction')]
-    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
+    #[Route('/{id}', name: 'a_faction', methods: ['GET'])]
+    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function detail(Faction $faction): JsonResponse
     {
         return $this->json($faction);
