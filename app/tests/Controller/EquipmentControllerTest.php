@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class EquipmentControllerTest extends WebTestCase
 {
@@ -124,6 +125,52 @@ class EquipmentControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $this->entityManager->refresh($toUpdate);
         $this->assertEquals("Changed", $toUpdate->getName());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnCompleteFactionList(): void
+    {
+        $this->client->request(
+            'GET',
+            self::BASE_URI
+        );
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseFormatSame("json");
+
+        $jsonResponse = $this->client->getResponse()->getContent();
+
+        $obtainedArray = json_decode($jsonResponse, true);
+
+        $equipments = $this->equipmentRepository->findAll();
+        foreach ($equipments as $equipment) {
+            $this->assertTrue($this->in_array($equipment, $obtainedArray));
+        }
+    }
+
+    private function in_array(Equipment $needle, array $haystack): bool
+    {
+        foreach ($haystack as $item) {
+            if ($this->hasExpectedProperties($item, $needle)) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasExpectedProperties(array $item, Equipment $needle): bool
+    {
+        return
+            $item['id'] === $needle->getId() &&
+            $item['name'] === $needle->getName() &&
+            $item['type'] === $needle->getType() &&
+            $item['made_by'] === $needle->getMadeBy()
+            ;
     }
 
     protected function createUser(): void
