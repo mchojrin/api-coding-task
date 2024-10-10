@@ -68,7 +68,8 @@
       "assets:install %PUBLIC_DIR%": "symfony-cmd"
     },
     "post-install-cmd": [
-      "@auto-scripts"
+      "@auto-scripts",
+      "@build-docs"
     ],
     "post-update-cmd": [
       "@auto-scripts"
@@ -79,6 +80,10 @@
     ],
     "build-docs": [
       "php vendor/bin/openapi -e var -e migrations -e vendor -o var/openapi.yaml ."
+    ],
+    "populate-db" : [
+      "php bin/console -q doctrine:migrations:migrate",
+      "php bin/console -q doctrine:fixtures:load"
     ]
   },
   "conflict": {

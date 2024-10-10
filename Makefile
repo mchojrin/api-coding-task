@@ -64,10 +64,16 @@ test: ## Ejecuta la suite de tests
 	docker run --rm -ti -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) composer test
 
 start: ## Arranca el entorno
-	docker-compose up -d
+	docker-compose up --wait
 
 stop: ## Para el entorno
 	docker-compose down --remove-orphans
 
 build-docs: ## Genera el archivo openap.yaml con la documentación de la API
 	docker run --rm -ti -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) composer build-docs
+
+open: start ## Abre un browser en la URL inicial
+	xdg-open http://localhost:8080
+
+populate-db: start ## Llena la base con datos de prueba
+	 docker-compose exec php composer populate-db
