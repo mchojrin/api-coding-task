@@ -81,5 +81,5 @@ open: start ## Abre un browser en la URL inicial
 populate-db: start ## Llena la base con datos de prueba
 	docker-compose exec php composer populate-db
 
-add-user: ## Agrega un usuario autorizado
+add-user: start ## Agrega un usuario autorizado
 	docker-compose exec php composer add-user
