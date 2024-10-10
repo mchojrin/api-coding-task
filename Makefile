@@ -43,7 +43,10 @@ help: ## Listar comandos disponibles en este Makefile
 
 
 # BUILD COMMANDS -------------------------------------------------------------------------------------------------------
-build: build-container composer-install ## Construye las dependencias del proyecto
+init: ## Inicializa el entorno
+	[ ! -f app/.env ] && cp app/.env.dist app/.env ; echo "app/.env file created, customize as needed"
+
+build: init build-container composer-install ## Construye las dependencias del proyecto
 
 build-container: ## Construye el contenedor de la aplicación
 	docker build --no-cache --target development -t $(IMAGE_NAME):$(IMAGE_TAG_DEV) .
@@ -59,3 +62,24 @@ composer-require: ## Añade nuevas dependencias de producción
 
 composer-require-dev: ## Añade nuevas dependencias de desarrollo
 	docker run --rm -ti -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) composer require --dev --verbose
+
+test: ## Ejecuta la suite de tests
+	docker run --rm -ti -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) composer test
+
+start: ## Arranca el entorno
+	docker-compose up --wait
+
+stop: ## Para el entorno
+	docker-compose down --remove-orphans
+
+build-docs: ## Genera el archivo openap.yaml con la documentación de la API
+	docker run --rm -ti -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) composer build-docs
+
+open: start ## Abre un browser en la URL inicial
+	xdg-open http://localhost:8080
+
+populate-db: start ## Llena la base con datos de prueba
+	docker-compose exec php composer populate-db
+
+add-user: ## Agrega un usuario autorizado
+	docker-compose exec php composer add-user
