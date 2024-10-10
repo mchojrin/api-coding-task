@@ -10,9 +10,10 @@ use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/docs', format: 'json')]
 class DocsController extends AbstractController
 {
-    #[Route('/docs', name: 'docs_index', methods: ['GET'], format: 'yaml')]
+    #[Route('/', name: 'docs_index', methods: ['GET'], format: 'yaml')]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     public function index(KernelInterface $kernel): Response
     {

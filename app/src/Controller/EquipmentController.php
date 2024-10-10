@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/equipments', name: 'equipments_')]
+#[Route('/equipments', name: 'equipments_', format: 'yaml')]
 class EquipmentController extends AbstractController
 {
     public function __construct(private readonly EntityManagerInterface $entityManager)

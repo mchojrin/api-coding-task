@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Info(version: "0.1", title: "API Backend Coding Task")]
-#[Route('/characters', name: 'characters_', methods: ['GET'])]
+#[Route('/characters', name: 'characters_', methods: ['GET'], format: 'json')]
 class CharacterController extends AbstractController
 {
     public function __construct(private readonly EntityManagerInterface $entityManager)

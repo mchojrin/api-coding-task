@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/factions', name: 'factions_')]
+#[Route('/factions', name: 'factions_', format: 'json')]
 class FactionController extends AbstractController
 {
 
