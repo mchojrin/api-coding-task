@@ -43,6 +43,9 @@ help: ## Listar comandos disponibles en este Makefile
 
 
 # BUILD COMMANDS -------------------------------------------------------------------------------------------------------
+init: ## Inicializa el entorno
+	docker run --rm -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) cp /app/.env.dist /app/.env ; echo "/app/.env file created, customize as needed"
+
 build: build-container composer-install ## Construye las dependencias del proyecto
 
 build-container: ## Construye el contenedor de la aplicación
