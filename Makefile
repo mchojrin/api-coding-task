@@ -60,5 +60,14 @@ composer-require: ## Añade nuevas dependencias de producción
 composer-require-dev: ## Añade nuevas dependencias de desarrollo
 	docker run --rm -ti -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) composer require --dev --verbose
 
-test:
+test: ## Ejecuta la suite de tests
 	docker run --rm -ti -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) composer test
+
+start: ## Arranca el entorno
+	docker-compose up -d
+
+stop: ## Para el entorno
+	docker-compose down --remove-orphans
+
+build-docs: ## Genera el archivo openap.yaml con la documentación de la API
+	docker run --rm -ti -v ${PWD}/app:/app -w /app $(IMAGE_NAME):$(IMAGE_TAG_DEV) composer build-docs

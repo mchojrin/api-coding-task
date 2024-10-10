@@ -14,6 +14,36 @@ make build
 
 This command executes the Docker image building process and performs the [Composer](https://getcomposer.org) dependencies installation.
 
+## Test
+
+```bash
+make test
+```
+
+This command executes the test suite inside a docker container.
+
+## Run
+
+```bash
+make start
+```
+
+This commands starts the docker containers necessary to run the application
+
+## Stop
+
+```bash
+make stop
+```
+
+This commands stops the docker containers necessary to run the application
+
+## Using the API
+
+After starting the services, open a browser window at `http://localhost:8080` to get a general idea of what's available.
+
+At `http://localhost:8080/docs` you'll see the Open API specification.
+
 ---
 
 Type `make help` for more tasks present in `Makefile`.
