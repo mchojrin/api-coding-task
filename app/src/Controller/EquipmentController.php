@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/equipments', name: 'equipments_', format: 'yaml')]
 class EquipmentController extends AbstractController
@@ -48,6 +49,26 @@ class EquipmentController extends AbstractController
         );
     }
 
+    #[Route('/{id}', name: 'detail', methods: ['GET'])]
+    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
+    #[Get(
+        path: '/equipments/{id}',
+        operationId: 'getEquipment',
+        description: 'Create a new equipment',
+        summary: 'Create a new equipment',
+        parameters: [
+            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1"),
+        ],
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ]
+    )]
+    public function detail(Equipment $equipment): JsonResponse
+    {
+        return $this->json($equipment);
+    }
+
     #[Route('/', name: 'create', methods: ['POST'])]
     #[Post(
         path: '/equipments',
@@ -69,8 +90,8 @@ class EquipmentController extends AbstractController
             new Response(response: 200, description: 'OK'),
             new Response(response: 401, description: 'Not allowed')
         ],
-    )
-    ]
+    )]
+    #[IsGranted("IS_AUTHENTICATED_FULLY")]
     public function create(Request $request): JsonResponse
     {
         $equipmentData = json_decode($request->getContent(), true);
@@ -90,27 +111,6 @@ class EquipmentController extends AbstractController
             ]);
     }
 
-    #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
-    #[Get(
-        path: '/equipments/{id}',
-        operationId: 'getEquipment',
-        description: 'Create a new equipment',
-        summary: 'Create a new equipment',
-        parameters: [
-            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1"),
-        ],
-        responses: [
-            new Response(response: 200, description: 'OK'),
-            new Response(response: 401, description: 'Not allowed')
-        ]
-    )
-    ]
-    public function detail(Equipment $equipment): JsonResponse
-    {
-        return $this->json($equipment);
-    }
-
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     #[Delete(
         path: '/equipments/{id}',
@@ -124,8 +124,8 @@ class EquipmentController extends AbstractController
             new Response(response: 200, description: 'OK'),
             new Response(response: 401, description: 'Not allowed')
         ],
-    )
-    ]
+    )]
+    #[IsGranted("IS_AUTHENTICATED_FULLY")]
     public function delete(Equipment $toDelete): JsonResponse
     {
         $this->entityManager->remove($toDelete);
@@ -159,6 +159,7 @@ class EquipmentController extends AbstractController
             new Response(response: 401, description: 'Not allowed')
         ],
     )]
+    #[IsGranted("IS_AUTHENTICATED_FULLY")]
     public function update(Equipment $toUpdate, Request $request): JsonResponse
     {
         $changes = json_decode($request->getContent(), true);
