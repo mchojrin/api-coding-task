@@ -40,41 +40,24 @@ This commands stops the docker containers necessary to run the application
 
 ## Using the API
 
-After starting the services, open a browser window at `http://localhost:8080` to get a general idea of what's available.
+After starting the services, open a browser window at `http://localhost:8080` to get a general idea of what's available. You can use the command `make open` for this purpose.
 
 At `http://localhost:8080/docs` you'll see the Open API specification.
 
----
+## Rebuilding the documentation
 
-Type `make help` for more tasks present in `Makefile`.
+```bash
+make build-docs
+```
 
-## Functional requirements
-
-**Implement a CRUD (Create-Read-Update-Delete) API.**
-
-The following add-ons will be positively evaluated:
-
-- Authentication
-- Authorization
-- Cache
-- Documentation
+This command generates the OpenAPI specification file (`var/openapi.yaml`).
+Run this command to update the documentation available for clients.
 
 ---
 
-A light infrastructure is provided with a populated MySQL database with example data and a web server using PHP built-in development server.
+## Technologies used
 
-## Non functional requirements
-
-- The presence of unit, integration and acceptance tests will positively appreciated.
-- Use whatever you want to achieve this: MVC, hexagonal arquitecture, DDD, etc.
-- A deep knowledge about SOLID, YAGNI or KISS would be positively evaluated.
-- DevOps knowledge (GitHub Actions, Jenkins, etc.) would be appreciated too.
-- It's important to find a balance between code quality and deadline; releasing a non functional application in time or a perfect application out of time may be negatively evaluated.
-- Good and well-documented commits will be appreciated.
-- Efficient and smart use of third party libraries will be positively appreciated.
-
----
-
-Beyond the requirements of this test we want to see what you can do, feel free to show us your real potential and, the
-most important part, have fun!
-
+* [Symfony](https://symfony.com/)
+* [Doctrine](https://www.doctrine-project.org/projects/orm.html)
+* [Swagger php](https://zircote.github.io/swagger-php/)
+* [PhpUnit](https://phpunit.de/index.html)
