@@ -72,6 +72,10 @@
     ],
     "post-update-cmd": [
       "@auto-scripts"
+    ],
+    "test": [
+      "[ ! -f ./var/data.db ] && bin/console -q --env=test doctrine:schema:create || true",
+      "php -d error_reporting=22527 bin/phpunit -c ."
     ]
   },
   "conflict": {
