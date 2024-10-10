@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Character;
 use App\Entity\Equipment;
 use App\Entity\Faction;
+use DateMalformedStringException;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use OpenApi\Attributes\Delete;
@@ -22,6 +23,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Info(version: "0.1", title: "API Backend Coding Task")]
 #[Route('/characters', name: 'characters_', methods: ['GET'], format: 'json')]
@@ -71,7 +73,7 @@ class CharacterController extends AbstractController
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     #[Route('/', name: 'create', methods: ['POST'])]
     #[Post(
@@ -96,8 +98,8 @@ class CharacterController extends AbstractController
             new Response(response: 200, description: 'Character created'),
             new Response(response: 401, description: 'Not allowed')
         ],
-    )
-    ]
+    )]
+    #[IsGranted("IS_AUTHENTICATED")]
     public function create(Request $request): JsonResponse
     {
         $characterData = json_decode($request->getContent(), true);
@@ -130,8 +132,8 @@ class CharacterController extends AbstractController
             new Response(response: 200, description: 'Character deleted'),
             new Response(response: 401, description: 'Not allowed')
         ],
-    )
-    ]
+    )]
+    #[IsGranted("IS_AUTHENTICATED")]
     public function delete(Character $toDelete): JsonResponse
     {
         $this->entityManager->remove($toDelete);
@@ -141,7 +143,7 @@ class CharacterController extends AbstractController
     }
 
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     #[Patch(
@@ -170,6 +172,7 @@ class CharacterController extends AbstractController
             new Response(response: 401, description: 'Not allowed')
         ],
     )]
+    #[IsGranted("IS_AUTHENTICATED")]
     public function update(Character $toUpdate, Request $request): JsonResponse
     {
         $changes = json_decode($request->getContent(), true);

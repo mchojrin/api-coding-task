@@ -66,9 +66,6 @@ class CharacterControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             self::BASE_URI,
-            server: [
-                'HTTP_X-AUTH-TOKEN' => $this->token,
-            ],
         );
 
         $this->assertResponseIsSuccessful();
