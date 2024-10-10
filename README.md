@@ -47,6 +47,26 @@ make open
 To open a browser at the root URL.
 At `http://localhost:8080/docs` you'll see the Open API specification.
 
+## Altering data
+
+To alter data issue non-GET requests to the desired endpoint. 
+
+Keep in mind that this will only work if you use a valid token, like the one you got from `make add-user`.
+
+For instance, to add a character you can use a command such as:
+
+`curl -X POST -H 'X-AUTH-TOKEN: 1ee143556a6f260858b3b90f8cc51f01a45e' -H "Content-Type: application/json" -d '{"name":"Mauro", "faction_id": "2", "equipment_id": "2", "kingdom": "My kingdom", "birth_date": "1977-12-22"}' http://localhost:8080/characters/`
+
+Replace `1ee143556a6f260858b3b90f8cc51f01a45e` with your token.
+
+To delete a faction you can use a command such as:
+
+`curl -X DELETE -H 'X-AUTH-TOKEN: 1ee143556a6f260858b3b90f8cc51f01a45e' -H "Content-Type: application/json" http://localhost:8080/factions/`
+
+To update an equipment you can use a command such as:
+
+`curl -X PATCH -H 'X-AUTH-TOKEN: 1ee143556a6f260858b3b90f8cc51f01a45e' -H "Content-Type: application/json" -d '{"type":"weapons"}' http://localhost:8080/equipments/3`
+
 ## Stop
 
 ```bash
@@ -82,3 +102,9 @@ To get a full list of available commands
 * [Doctrine](https://www.doctrine-project.org/projects/orm.html)
 * [Swagger php](https://zircote.github.io/swagger-php/)
 * [PhpUnit](https://phpunit.de/index.html)
+
+## Future improvements
+
+* Add logging
+* Improve error handling
+* Use finer-grained authorization
