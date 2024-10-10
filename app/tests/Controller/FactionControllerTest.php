@@ -4,6 +4,7 @@ namespace App\Tests\Controller;
 
 use App\Entity\Faction;
 use App\Entity\User;
+use App\Factory\FactionFactory;
 use App\Repository\FactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 class FactionControllerTest extends WebTestCase
 {
     const BASE_URI = '/factions/';
+    const CHARACTERS_DETAILS_PREFIX = '/characters/';
     private readonly FactionRepository $factionRepository;
     private readonly EntityManagerInterface $entityManager;
     private string $token;
@@ -57,6 +59,36 @@ class FactionControllerTest extends WebTestCase
         foreach ($factions as $faction) {
             $this->assertTrue($this->in_array($faction, $obtainedArray));
         }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnFactionDetails(): void
+    {
+        $faction = $this->createFaction();
+        $this->entityManager->persist($faction);
+        $this->entityManager->flush();
+
+        $this->client->request(
+            'GET',
+            self::BASE_URI.$faction->getId()
+        );
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseFormatSame("json");
+
+        $obtainedArray = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals($faction->getId(), $obtainedArray['id']);
+        $this->assertEquals($faction->getFactionName(), $obtainedArray['faction_name']);
+        $this->assertEquals($faction->getDescription(), $obtainedArray['description']);
+        foreach ($faction->getCharacters() as $character) {
+            $this->assertContains( self::CHARACTERS_DETAILS_PREFIX.$character->getId(), $obtainedArray['characters']);
+        }
+
+        $this->entityManager->remove($faction);
+        $this->entityManager->flush();
     }
     /**
      * @test
@@ -177,5 +209,15 @@ class FactionControllerTest extends WebTestCase
             $item['description'] === $needle->getDescription() &&
             $item['faction_name'] === $needle->getFactionName()
             ;
+    }
+
+    /**
+     */
+    protected function createFaction(): Faction
+    {
+       return new Faction(
+           'New faction name',
+           'New faction description',
+       );
     }
 }
