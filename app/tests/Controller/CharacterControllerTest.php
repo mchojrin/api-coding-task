@@ -5,9 +5,12 @@ namespace App\Tests\Controller;
 use App\Entity\Character;
 use App\Entity\Equipment;
 use App\Entity\Faction;
+use App\Entity\User;
 use App\Repository\CharacterRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +25,11 @@ class CharacterControllerTest extends WebTestCase
     private readonly KernelBrowser $client;
     private Equipment $equipment;
     private Faction $faction;
+    private string $token;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->client = static::createClient();
@@ -32,6 +39,7 @@ class CharacterControllerTest extends WebTestCase
 
         $this->equipment = $this->createEquipment();
         $this->faction = $this->createFaction();
+        $this->createUser();
 
         $this->entityManager->persist($this->equipment);
         $this->entityManager->persist($this->faction);
@@ -42,9 +50,12 @@ class CharacterControllerTest extends WebTestCase
     {
         $this->removeEquipment();
         $this->removeFaction();
+        $this->removeUser();
 
         $this->entityManager->flush();
+        parent::tearDown();
     }
+
     /**
      * @test
      */
@@ -52,7 +63,10 @@ class CharacterControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            self::BASE_URI
+            self::BASE_URI,
+            server: [
+                'HTTP_X-AUTH-TOKEN' => $this->token,
+            ],
         );
 
         $this->assertResponseIsSuccessful();
@@ -80,10 +94,14 @@ class CharacterControllerTest extends WebTestCase
             'faction_id' => $this->faction->getId(),
             'birth_date' => '1981-04-13',
         ];
+
         $this->client->request(
             'POST',
             self::BASE_URI,
-            content: json_encode($newCharacterData)
+            server: [
+                'HTTP_X-AUTH-TOKEN' => $this->token,
+            ],
+            content: json_encode($newCharacterData),
         );
 
         $this->assertResponseIsSuccessful();
@@ -122,7 +140,10 @@ class CharacterControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            self::BASE_URI.$newCharacter->getId()
+            self::BASE_URI . $newCharacter->getId(),
+            server: [
+                'HTTP_X-AUTH-TOKEN' => $this->token,
+            ],
         );
 
         $this->assertResponseIsSuccessful();
@@ -133,6 +154,38 @@ class CharacterControllerTest extends WebTestCase
         $this->assertEmpty($foundCharacter);
     }
 
+    /**
+     * @throws ORMException
+     * @test
+     */
+    public function shouldAllowUpdatingCharacters(): void
+    {
+        $toUpdate = new Character(
+            name: 'Change me',
+            birth_date: new DateTimeImmutable('1987-11-03'),
+            kingdom: 'Changeable Kingdom',
+            equipment: $this->equipment,
+            faction: $this->faction,
+        );
+
+        $this->entityManager->persist($toUpdate);
+        $this->entityManager->flush();
+
+        $this->client->request(
+            'PATCH',
+            self::BASE_URI . $toUpdate->getId(),
+            server: [
+                'HTTP_X-AUTH-TOKEN' => $this->token,
+            ],
+            content: json_encode(['name' => "Changed", 'kingdom' => 'Another Kingdom'])
+        );
+
+        $this->assertResponseIsSuccessful();
+        $this->entityManager->refresh($toUpdate);
+        $this->assertEquals("Changed", $toUpdate->getName());
+        $this->assertEquals("Another Kingdom", $toUpdate->getKingdom());
+    }
+
     private function in_array(Character $needle, array $haystack): bool
     {
         return in_array([
@@ -140,9 +193,9 @@ class CharacterControllerTest extends WebTestCase
             'name' => $needle->getName(),
             'birth_date' => $needle->getBirthDate()->format('Y-m-d'),
             'kingdom' => $needle->getKingdom(),
-            'equipment' => '/equipments/'.$needle->getEquipment()->getId(),
-            'faction' => '/factions/'.$needle->getFaction()->getId(),
-            ], $haystack);
+            'equipment' => '/equipments/' . $needle->getEquipment()->getId(),
+            'faction' => '/factions/' . $needle->getFaction()->getId(),
+        ], $haystack);
     }
 
     private function findCharacter(int $id): ?Character
@@ -175,5 +228,22 @@ class CharacterControllerTest extends WebTestCase
     private function removeFaction(): void
     {
         $this->entityManager->remove($this->faction);
+    }
+
+    protected function createUser(): void
+    {
+        $this->token = bin2hex(random_bytes(36));
+        $user = new User();
+        $user->setToken($this->token);
+        $user->setRoles(['ROLE_USER']);
+        $user->setEmail("test@test.com");
+        $user->setPassword("password");
+        $this->entityManager->persist($user);
+    }
+
+    protected function removeUser(): void
+    {
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['token' => $this->token]);
+        $this->entityManager->remove($user);
     }
 }
