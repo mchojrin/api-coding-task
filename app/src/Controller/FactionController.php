@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/factions', name: 'factions_', format: 'json')]
 class FactionController extends AbstractController
@@ -29,7 +30,15 @@ class FactionController extends AbstractController
         );
     }
 
+    #[Route('/{id}', name: 'detail', methods: ['GET'])]
+    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
+    public function detail(Faction $faction): JsonResponse
+    {
+        return $this->json($faction);
+    }
+
     #[Route('/', name: 'create', methods: ['POST'])]
+    #[IsGranted("IS_AUTHENTICATED")]
     public function create(Request $request): JsonResponse
     {
         $requestBody = json_decode($request->getContent(), true);
@@ -49,6 +58,7 @@ class FactionController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted("IS_AUTHENTICATED")]
     public function delete(Faction $toDelete): JsonResponse
     {
         $this->entityManager->remove($toDelete);
@@ -58,6 +68,7 @@ class FactionController extends AbstractController
     }
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
+    #[IsGranted("IS_AUTHENTICATED")]
     public function update(Faction $toUpdate, Request $request): JsonResponse
     {
         $changes = json_decode($request->getContent(), true);
@@ -77,12 +88,5 @@ class FactionController extends AbstractController
         $this->entityManager->flush();
 
         return $this->json([]);
-    }
-
-    #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
-    public function detail(Faction $faction): JsonResponse
-    {
-        return $this->json($faction);
     }
 }
