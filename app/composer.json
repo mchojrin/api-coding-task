@@ -84,6 +84,9 @@
     "populate-db" : [
       "php bin/console -q doctrine:migrations:migrate",
       "php bin/console -q doctrine:fixtures:load"
+    ],
+    "add-user": [
+      "php bin/console app:add-user"
     ]
   },
   "conflict": {
