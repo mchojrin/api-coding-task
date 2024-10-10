@@ -11,6 +11,7 @@ use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,9 +59,7 @@ class CharacterControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnCompleteCharacterList(): void
     {
         $this->client->request(
@@ -81,9 +80,7 @@ class CharacterControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnCharacterDetails(): void
     {
         $character = $this->createCharacter();
@@ -110,9 +107,7 @@ class CharacterControllerTest extends WebTestCase
         $this->entityManager->flush();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldAllowCreatingNewCharacters(): void
     {
         $newCharacterData = [
@@ -150,9 +145,7 @@ class CharacterControllerTest extends WebTestCase
         $this->entityManager->remove($foundCharacter);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldAllowDeletingCharacters(): void
     {
         $newCharacter = new Character(
@@ -184,8 +177,8 @@ class CharacterControllerTest extends WebTestCase
 
     /**
      * @throws ORMException
-     * @test
      */
+    #[Test]
     public function shouldAllowUpdatingCharacters(): void
     {
         $toUpdate = new Character(

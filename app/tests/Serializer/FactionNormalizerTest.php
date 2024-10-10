@@ -9,9 +9,12 @@ use App\Entity\Equipment;
 use App\Entity\Faction;
 use App\Serializer\FactionNormalizer;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class FactionNormalizerTest extends TestCase
@@ -33,10 +36,10 @@ class FactionNormalizerTest extends TestCase
     /**
      * @param Faction $aFaction
      * @return void
-     * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
-     * @test
-     * @dataProvider factionProvider
+     * @throws ExceptionInterface
      */
+    #[Test]
+    #[DataProvider(methodName: "factionProvider")]
     public function shouldNormalizeAFaction(Faction $aFaction): void
     {
         $this->configureBaseNormalizer($this->baseNormalizer, $aFaction);

@@ -7,6 +7,8 @@ use App\Entity\Equipment;
 use App\Entity\Faction;
 use App\Serializer\CharacterNormalizer;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,11 +24,10 @@ class CharacterNormalizerTest extends TestCase
     private const FACTION_DETAIL_URL_PREFIX = '/factions/';
 
     /**
-     * @param Character $aCharacter
-     * @throws ExceptionInterface
-     * @test
-     * @dataProvider characterProvider
+     * @throws ExceptionInterface|\PHPUnit\Framework\MockObject\Exception
      */
+    #[Test]
+    #[DataProvider(methodName: "characterProvider")]
     public function shouldNormalizeACharacter(Character $aCharacter): void
     {
         $baseNormalizer = $this->createMock(NormalizerInterface::class);
@@ -35,7 +36,7 @@ class CharacterNormalizerTest extends TestCase
         $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->configureUrlGenerator($urlGenerator, $aCharacter);
 
-        $characterNormalizer = new CharacterNormalizer($baseNormalizer,$urlGenerator);
+        $characterNormalizer = new CharacterNormalizer($baseNormalizer, $urlGenerator);
 
         $this->assertEquals($this->buildExpectedReturn($aCharacter), $characterNormalizer->normalize($aCharacter));
     }

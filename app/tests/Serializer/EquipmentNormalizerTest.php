@@ -9,6 +9,8 @@ use App\Entity\Equipment;
 use App\Entity\Faction;
 use App\Serializer\EquipmentNormalizer;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -33,9 +35,9 @@ class EquipmentNormalizerTest extends TestCase
 
     /**
      * @throws ExceptionInterface
-     * @test
-     * @dataProvider equipmentProvider
      */
+    #[Test]
+    #[DataProvider(methodName: "equipmentProvider")]
     public function shouldNormalizeAnEquipment(Equipment $anEquipment): void
     {
         $this->configureBaseNormalizer($this->baseNormalizer, $anEquipment);

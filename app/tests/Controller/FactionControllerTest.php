@@ -8,6 +8,7 @@ use App\Factory\FactionFactory;
 use App\Repository\FactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,9 +38,7 @@ class FactionControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnCompleteFactionList(): void
     {
         $this->client->request(
@@ -61,9 +60,7 @@ class FactionControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnFactionDetails(): void
     {
         $faction = $this->createFaction();
@@ -90,9 +87,8 @@ class FactionControllerTest extends WebTestCase
         $this->entityManager->remove($faction);
         $this->entityManager->flush();
     }
-    /**
-     * @test
-     */
+    
+    #[Test]
     public function shouldAllowCreatingNewFactions(): void
     {
         $newFactionData = [
@@ -120,10 +116,7 @@ class FactionControllerTest extends WebTestCase
         $this->assertEquals($newFaction->getDescription(), $newFactionData['description']);
     }
 
-    /**
-     * @return void
-     * @test
-     */
+    #[Test]
     public function shouldAllowDeletingFactions(): void
     {
         $toDelete = new Faction(faction_name: 'Delete me', description: 'Faction to be deleted');
@@ -147,8 +140,8 @@ class FactionControllerTest extends WebTestCase
 
     /**
      * @throws ORMException
-     * @test
      */
+    #[Test]
     public function shouldAllowUpdatingFactions(): void
     {
         $toUpdate = new Faction(faction_name: 'Change me', description: 'Faction to be updated');
@@ -211,8 +204,6 @@ class FactionControllerTest extends WebTestCase
             ;
     }
 
-    /**
-     */
     protected function createFaction(): Faction
     {
        return new Faction(
