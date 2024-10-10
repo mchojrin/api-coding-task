@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 class EquipmentControllerTest extends WebTestCase
 {
     private const BASE_URI = '/equipments/';
+
+    const CHARACTERS_DETAILS_PREFIX = '/characters/';
     private readonly EquipmentRepository $equipmentRepository;
     private readonly EntityManagerInterface $entityManager;
     private string $token;
@@ -130,7 +132,7 @@ class EquipmentControllerTest extends WebTestCase
     /**
      * @test
      */
-    public function shouldReturnCompleteFactionList(): void
+    public function shouldReturnCompleteEquipmentList(): void
     {
         $this->client->request(
             'GET',
@@ -149,6 +151,36 @@ class EquipmentControllerTest extends WebTestCase
         foreach ($equipments as $equipment) {
             $this->assertTrue($this->in_array($equipment, $obtainedArray));
         }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnEquipmentDetails(): void
+    {
+        $equipment = $this->createEquipment();
+        $this->entityManager->persist($equipment);
+        $this->entityManager->flush();
+
+        $this->client->request(
+            'GET',
+            self::BASE_URI.$equipment->getId(),
+        );
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseFormatSame("json");
+
+        $obtainedArray = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals($equipment->getName(), $obtainedArray['name']);
+        $this->assertEquals($equipment->getMadeBy(), $obtainedArray['made_by']);
+        $this->assertEquals($equipment->getType(), $obtainedArray['type']);
+        foreach ($equipment->getCharacters() as $character) {
+            $this->assertContains( self::CHARACTERS_DETAILS_PREFIX.$character->getId(), $obtainedArray['characters']);
+        }
+
+        $this->entityManager->remove($equipment);
+        $this->entityManager->flush();
     }
 
     private function in_array(Equipment $needle, array $haystack): bool
@@ -190,5 +222,14 @@ class EquipmentControllerTest extends WebTestCase
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['token' => $this->token]);
         $this->entityManager->remove($user);
         $this->entityManager->flush();
+    }
+
+    private function createEquipment(): Equipment
+    {
+        return new Equipment(
+            name: 'New equipment',
+            type: 'Equipment to be deleted',
+            made_by: 'New equipment made by',
+        );
     }
 }
