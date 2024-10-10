@@ -78,6 +78,9 @@ build-docs: ## Genera el archivo openap.yaml con la documentación de la API
 open: start ## Abre un browser en la URL inicial
 	xdg-open http://localhost:8080
 
+open-docs: start ## Abre un browser en la URL de la documentación
+	xdg-open http://localhost:8080/docs
+
 populate-db: start ## Llena la base con datos de prueba
 	docker-compose exec php composer populate-db
 
