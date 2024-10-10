@@ -50,7 +50,7 @@ class EquipmentController extends AbstractController
 
     #[Route('/', name: 'create', methods: ['POST'])]
     #[Post(
-        path: '/',
+        path: '/equipments',
         operationId: 'createEquipment',
         description: 'Create a new equipment',
         summary: 'Create a new equipment',
@@ -93,7 +93,7 @@ class EquipmentController extends AbstractController
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     #[Get(
-        path: '/{id}',
+        path: '/equipments/{id}',
         operationId: 'getEquipment',
         description: 'Create a new equipment',
         summary: 'Create a new equipment',
@@ -113,7 +113,7 @@ class EquipmentController extends AbstractController
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     #[Delete(
-        path: '/',
+        path: '/equipments/{id}',
         operationId: 'deleteEquipment',
         description: 'Delete an equipment',
         summary: 'Delete a new equipment',
@@ -136,7 +136,7 @@ class EquipmentController extends AbstractController
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     #[Patch(
-        path: '/{id}',
+        path: '/equipments/{id}',
         operationId: 'updateEquipment',
         description: 'Update an equipment',
         summary: 'Update an equipment',

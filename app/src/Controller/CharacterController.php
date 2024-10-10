@@ -74,7 +74,7 @@ class CharacterController extends AbstractController
      */
     #[Route('/', name: 'create', methods: ['POST'])]
     #[Post(
-        path: '/',
+        path: '/characters',
         operationId: 'createCharacter',
         description: 'Create a new character',
         summary: 'Create a new character',
@@ -118,7 +118,7 @@ class CharacterController extends AbstractController
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     #[Delete(
-        path: '/',
+        path: '/characters/{id}',
         operationId: 'deleteCharacter',
         description: 'Delete a character',
         summary: 'Delete a character',
