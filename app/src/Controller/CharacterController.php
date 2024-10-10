@@ -7,9 +7,11 @@ use App\Entity\Equipment;
 use App\Entity\Faction;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Attributes\Delete;
 use OpenApi\Attributes\Get;
 use OpenApi\Attributes\Info;
 use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Parameter;
 use OpenApi\Attributes\Post;
 use OpenApi\Attributes\Property;
 use OpenApi\Attributes\RequestBody;
@@ -67,6 +69,9 @@ class CharacterController extends AbstractController
         return $this->json($character);
     }
 
+    /**
+     * @throws \DateMalformedStringException
+     */
     #[Route('/', name: 'create', methods: ['POST'])]
     #[Post(
         path: '/',
@@ -109,5 +114,28 @@ class CharacterController extends AbstractController
         return $this->json([
             'id' => $newCharacter->getId()
         ]);
+    }
+
+    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[Delete(
+        path: '/',
+        operationId: 'deleteCharacter',
+        description: 'Delete a character',
+        summary: 'Delete a character',
+        parameters: [
+            new Parameter(name: "id", description: 'Character id', in: 'path', required: true, example: "1"),
+        ],
+        responses: [
+            new Response(response: 200, description: 'Character deleted'),
+            new Response(response: 401, description: 'Not allowed')
+        ],
+    )
+    ]
+    public function delete(Character $toDelete): JsonResponse
+    {
+        $this->entityManager->remove($toDelete);
+        $this->entityManager->flush();
+
+        return $this->json([]);
     }
 }

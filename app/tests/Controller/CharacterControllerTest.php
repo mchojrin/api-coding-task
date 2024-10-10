@@ -6,6 +6,7 @@ use App\Entity\Character;
 use App\Entity\Equipment;
 use App\Entity\Faction;
 use App\Repository\CharacterRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -101,6 +102,35 @@ class CharacterControllerTest extends WebTestCase
         $this->assertEquals($newCharacterData['faction_id'], $foundCharacter->getFaction()->getId());
 
         $this->entityManager->remove($foundCharacter);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAllowDeletingCharacters(): void
+    {
+        $newCharacter = new Character(
+            name: 'New Character',
+            birth_date: new DateTimeImmutable('1981-04-13'),
+            kingdom: 'New Kingdom',
+            equipment: $this->equipment,
+            faction: $this->faction,
+        );
+        $this->entityManager->persist($newCharacter);
+        $this->entityManager->flush();
+        $newCharacterId = $newCharacter->getId();
+
+        $this->client->request(
+            'DELETE',
+            self::BASE_URI.$newCharacter->getId()
+        );
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseFormatSame("json");
+
+        $foundCharacter = $this->findCharacter($newCharacterId);
+        $this->assertEmpty($foundCharacter);
     }
 
     private function in_array(Character $needle, array $haystack): bool
