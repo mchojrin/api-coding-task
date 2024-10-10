@@ -76,7 +76,7 @@
     ],
     "test": [
       "[ ! -f ./var/data.db ] && bin/console -q --env=test doctrine:schema:create || true",
-      "php -d error_reporting=22527 bin/phpunit -c ."
+      "php bin/phpunit -c ."
     ],
     "build-docs": [
       "php vendor/bin/openapi -e var -e migrations -e vendor -o var/openapi.yaml ."
