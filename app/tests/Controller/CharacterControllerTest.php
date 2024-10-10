@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 class CharacterControllerTest extends WebTestCase
 {
     const BASE_URI = '/characters/';
+    const EQUIPMENT_DETAILS_URL_PREFIX = '/equipments/';
+    const FACTION_DETAILS_URL_PREFIX = '/factions/';
     private readonly CharacterRepository $characterRepository;
 
     private readonly EntityManagerInterface $entityManager;
@@ -80,6 +82,35 @@ class CharacterControllerTest extends WebTestCase
         foreach ($characters as $character) {
             $this->assertTrue($this->in_array($character, $obtainedArray));
         }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnCharacterDetails(): void
+    {
+        $character = $this->createCharacter();
+        $this->entityManager->persist($character);
+        $this->entityManager->flush();
+
+        $this->client->request(
+            'GET',
+            self::BASE_URI.$character->getId(),
+        );
+
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseFormatSame("json");
+
+        $obtainedArray = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals($character->getId(), $obtainedArray['id']);
+        $this->assertEquals($character->getKingdom(), $obtainedArray['kingdom']);
+        $this->assertEquals($character->getBirthDate()->format('Y-m-d'), $obtainedArray['birth_date']);
+        $this->assertEquals(self::EQUIPMENT_DETAILS_URL_PREFIX.$character->getEquipment()->getId(), $obtainedArray['equipment']);
+        $this->assertEquals(self::FACTION_DETAILS_URL_PREFIX.$character->getFaction()->getId(), $obtainedArray['faction']);
+
+        $this->entityManager->remove($character);
+        $this->entityManager->flush();
     }
 
     /**
@@ -245,5 +276,16 @@ class CharacterControllerTest extends WebTestCase
     {
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['token' => $this->token]);
         $this->entityManager->remove($user);
+    }
+
+    private function createCharacter(): Character
+    {
+        return new Character(
+            'New character',
+            new DateTimeImmutable('1981-04-13'),
+            'New kingdom',
+            $this->equipment,
+            $this->faction,
+        );
     }
 }
