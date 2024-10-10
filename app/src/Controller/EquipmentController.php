@@ -73,12 +73,12 @@ class EquipmentController extends AbstractController
     ]
     public function create(Request $request): JsonResponse
     {
-        $requestBody = json_decode($request->getContent(), true);
+        $equipmentData = json_decode($request->getContent(), true);
 
         $newEquipment = new Equipment(
-            name: $requestBody['name'],
-            type: $requestBody['type'],
-            made_by: $requestBody['made_by'],
+            name: $equipmentData['name'],
+            type: $equipmentData['type'],
+            made_by: $equipmentData['made_by'],
         );
 
         $this->entityManager->persist($newEquipment);
