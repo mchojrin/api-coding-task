@@ -8,6 +8,7 @@ use App\Repository\EquipmentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,9 +40,7 @@ class EquipmentControllerTest extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldAllowCreatingNewEquipments(): void
     {
         $newEquipmentData = [
@@ -70,10 +69,7 @@ class EquipmentControllerTest extends WebTestCase
         $this->assertEquals($newEquipment->getMadeBy(), $newEquipmentData['made_by']);
     }
 
-    /**
-     * @return void
-     * @test
-     */
+    #[Test]
     public function shouldAllowDeletingEquipments(): void
     {
         $toDelete = new Equipment(
@@ -101,8 +97,8 @@ class EquipmentControllerTest extends WebTestCase
 
     /**
      * @throws ORMException
-     * @test
      */
+    #[Test]
     public function shouldAllowUpdatingEquipments(): void
     {
         $toUpdate = new Equipment(
@@ -129,9 +125,7 @@ class EquipmentControllerTest extends WebTestCase
         $this->assertEquals("Changed", $toUpdate->getName());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnCompleteEquipmentList(): void
     {
         $this->client->request(
@@ -153,9 +147,7 @@ class EquipmentControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldReturnEquipmentDetails(): void
     {
         $equipment = $this->createEquipment();
