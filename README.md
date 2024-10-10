@@ -84,6 +84,22 @@ make build-docs
 This command generates the OpenAPI specification file (`var/openapi.yaml`).
 Run this command to update the documentation available for clients.
 
+## Deployment
+
+To deploy the application in a production environment, follow the same initial steps and then alter the contents of the file `app/.env` from
+
+```
+APP_ENV=dev
+```
+
+To
+
+```
+APP_ENV=prod
+```
+
+After this change, in case of failure, the user will receive a generic error instead of details that might jeopardize the availability of the service. 
+
 ## More commands
 
 Use the command
