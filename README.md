@@ -124,3 +124,5 @@ To get a full list of available commands
 * Add logging
 * Improve error handling
 * Use finer-grained authorization
+* Implement authentication via JWT
+* Prepare a specific docker image for production based on [https-portal](https://github.com/SteveLTN/https-portal)
