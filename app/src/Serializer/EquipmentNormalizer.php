@@ -19,20 +19,20 @@ class EquipmentNormalizer implements NormalizerInterface
     {
     }
 
-    public function normalize($equipment, ?string $format = null, array $context = []): array
+    public function normalize($object, ?string $format = null, array $context = []): array
     {
-        $data = $this->normalizer->normalize($equipment, $format, array_merge($context, [
+        $data = $this->normalizer->normalize($object, $format, array_merge($context, [
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['characters']
         ]));
 
-        $data['made_by'] = $equipment->getMadeBy();
+        $data['made_by'] = $object->getMadeBy();
         unset($data['madeBy']);
         $data['characters'] = array_map(
             fn (Character $character) =>
             $this->urlGenerator->generate(
                 "characters_detail", ['id' => $character->getId()]
             ),
-            $equipment->getCharacters()->toArray()
+            $object->getCharacters()->toArray()
         );
 
         return $data;

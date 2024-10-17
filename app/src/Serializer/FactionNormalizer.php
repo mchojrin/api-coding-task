@@ -20,20 +20,20 @@ class FactionNormalizer implements NormalizerInterface
     {
     }
 
-    public function normalize($faction, ?string $format = null, array $context = []): array
+    public function normalize($object, ?string $format = null, array $context = []): array
     {
-        $data = $this->normalizer->normalize($faction, $format, array_merge($context, [
+        $data = $this->normalizer->normalize($object, $format, array_merge($context, [
             AbstractNormalizer::IGNORED_ATTRIBUTES => ['characters']
         ]));
 
-        $data['faction_name'] = $faction->getFactionName();
+        $data['faction_name'] = $object->getFactionName();
         unset($data['factionName']);
         $data['characters'] = array_map(
             fn (Character $character) =>
             $this->urlGenerator->generate(
                 CHARACTERS_DETAIL_ROUTE, ['id' => $character->getId()]
             ),
-            $faction->getCharacters()->toArray()
+            $object->getCharacters()->toArray()
         );
 
         return $data;
