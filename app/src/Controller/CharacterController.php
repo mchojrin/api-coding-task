@@ -18,6 +18,7 @@ use OpenApi\Attributes\Post;
 use OpenApi\Attributes\Property;
 use OpenApi\Attributes\RequestBody;
 use OpenApi\Attributes\Response;
+use OpenApi\Attributes\Schema;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,9 +30,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/characters', name: 'characters_', methods: ['GET'], format: 'json')]
 class CharacterController extends AbstractController
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
-    {
-    }
+    public function __construct(private readonly EntityManagerInterface $entityManager) {}
 
     #[Route('/', name: 'index', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
@@ -59,6 +58,11 @@ class CharacterController extends AbstractController
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
     #[Get(
         path: '/characters/{id}',
+        parameters: [
+            new Parameter(name: "id", description: 'Character id', in: 'path', required: true, example: "1", schema: new Schema(
+                type: "integer"
+            ))
+        ],
         operationId: 'getCharacter',
         description: 'Get a specific character.',
         summary: 'Get a specific character details.',
@@ -126,7 +130,9 @@ class CharacterController extends AbstractController
         description: 'Delete a character',
         summary: 'Delete a character',
         parameters: [
-            new Parameter(name: "id", description: 'Character id', in: 'path', required: true, example: "1"),
+            new Parameter(name: "id", description: 'Character id', in: 'path', required: true, example: "1", schema: new Schema(
+                type: "integer"
+            )),
         ],
         responses: [
             new Response(response: 200, description: 'Character deleted'),
@@ -154,7 +160,6 @@ class CharacterController extends AbstractController
         requestBody: new RequestBody(
             required: true,
             content: new JsonContent(
-                required: [],
                 properties: [
                     new Property(property: "name", type: "string", example: "John Snow"),
                     new Property(property: "kingdom", type: "string", example: "Westeros"),
@@ -165,7 +170,9 @@ class CharacterController extends AbstractController
             )
         ),
         parameters: [
-            new Parameter(name: "id", description: 'Character id', in: 'path', required: true, example: "1"),
+            new Parameter(name: "id", description: 'Character id', in: 'path', required: true, example: "1", schema: new Schema(
+                type: "integer"
+            ))
         ],
         responses: [
             new Response(response: 200, description: 'Character updated'),

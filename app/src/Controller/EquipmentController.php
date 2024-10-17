@@ -13,6 +13,7 @@ use OpenApi\Attributes\Post;
 use OpenApi\Attributes\Property;
 use OpenApi\Attributes\RequestBody;
 use OpenApi\Attributes\Response;
+use OpenApi\Attributes\Schema;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,7 +58,9 @@ class EquipmentController extends AbstractController
         description: 'Create a new equipment',
         summary: 'Create a new equipment',
         parameters: [
-            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1"),
+            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1", schema: new Schema(
+                type:"integer"
+            )),
         ],
         responses: [
             new Response(response: 200, description: 'OK'),
@@ -118,7 +121,9 @@ class EquipmentController extends AbstractController
         description: 'Delete an equipment',
         summary: 'Delete a new equipment',
         parameters: [
-            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1"),
+            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1", schema: new Schema(
+                type:"integer"
+            )),
         ],
         responses: [
             new Response(response: 200, description: 'OK'),
@@ -143,7 +148,6 @@ class EquipmentController extends AbstractController
         requestBody: new RequestBody(
             required: true,
             content: new JsonContent(
-                required: [],
                 properties: [
                     new Property(property: "name", type: "string", example: "Hammer"),
                     new Property(property: "made_by", type: "string", example: "Mike the maker"),
@@ -152,7 +156,9 @@ class EquipmentController extends AbstractController
             )
         ),
         parameters: [
-            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1"),
+            new Parameter(name: "id", description: 'Equipment id', in: 'path', required: true, example: "1", schema: new Schema(
+                type:"integer"
+            )),
         ],
         responses: [
             new Response(response: 200, description: 'OK'),

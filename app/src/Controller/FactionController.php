@@ -10,6 +10,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use OpenApi\Attributes\Delete;
+use OpenApi\Attributes\Get;
+use OpenApi\Attributes\JsonContent;
+use OpenApi\Attributes\Parameter;
+use OpenApi\Attributes\Patch;
+use OpenApi\Attributes\Post;
+use OpenApi\Attributes\Property;
+use OpenApi\Attributes\RequestBody;
+use OpenApi\Attributes\Response;
+use OpenApi\Attributes\Schema;
 
 #[Route('/factions', name: 'factions_', format: 'json')]
 class FactionController extends AbstractController
@@ -21,6 +31,16 @@ class FactionController extends AbstractController
 
     #[Route('/', name: 'index', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
+    #[Get(
+        path: '/factions',
+        operationId: 'listFactions',
+        description: 'List of all factions in the database',
+        summary: 'List of all factions',
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ]
+    )]
     public function index(): JsonResponse
     {
         return $this->json($this
@@ -32,12 +52,47 @@ class FactionController extends AbstractController
 
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     #[Cache(maxage: 3600, public: true, mustRevalidate: true)]
+    #[Get(
+        path: '/factions/{id}',
+        operationId: 'getFaction',
+        description: 'Create a new faction',
+        summary: 'Create a new faction',
+        parameters: [
+            new Parameter(name: "id", description: 'Faction id', in: 'path', required: true, example: "1", schema: new Schema(
+                type:"integer"
+            )),
+        ],
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ]
+    )]
     public function detail(Faction $faction): JsonResponse
     {
         return $this->json($faction);
     }
 
     #[Route('/', name: 'create', methods: ['POST'])]
+    #[Post(
+        path: '/factions',
+        operationId: 'createFaction',
+        description: 'Create a new faction',
+        summary: 'Create a new faction',
+        requestBody: new RequestBody(
+            required: true,
+            content: new JsonContent(
+                required: ["faction_name", "description"],
+                properties: [
+                    new Property(property: "faction_name", type: "string", example: "Great Faction"),
+                    new Property(property: "description", type: "string", example: "The greatest faction there is"),
+                ],
+            )
+        ),
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ],
+    )]
     #[IsGranted("IS_AUTHENTICATED")]
     public function create(Request $request): JsonResponse
     {
@@ -59,6 +114,21 @@ class FactionController extends AbstractController
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     #[IsGranted("IS_AUTHENTICATED")]
+    #[Delete(
+        path: '/factions/{id}',
+        operationId: 'deleteFaction',
+        description: 'Delete a faction',
+        summary: 'Delete a faction',
+        parameters: [
+            new Parameter(name: "id", description: 'Faction id', in: 'path', required: true, example: "1", schema: new Schema(
+                type:"integer"
+            )),
+        ],
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ],
+    )]
     public function delete(Faction $toDelete): JsonResponse
     {
         $this->entityManager->remove($toDelete);
@@ -69,6 +139,30 @@ class FactionController extends AbstractController
 
     #[Route('/{id}', name: 'update', methods: ['PATCH'])]
     #[IsGranted("IS_AUTHENTICATED")]
+    #[Patch(
+        path: '/factions/{id}',
+        operationId: 'updateFaction',
+        description: 'Update an faction',
+        summary: 'Update an faction',
+        requestBody: new RequestBody(
+            required: true,
+            content: new JsonContent(
+                properties: [
+                    new Property(property: "faction_name", type: "string", example: "Great faction"),
+                    new Property(property: "description", type: "string", example: "The greatest faction there is"),
+                ],
+            )
+        ),
+        parameters: [
+            new Parameter(name: "id", description: 'Faction id', in: 'path', required: true, example: "1", schema: new Schema(
+                type:"integer"
+            )),
+        ],
+        responses: [
+            new Response(response: 200, description: 'OK'),
+            new Response(response: 401, description: 'Not allowed')
+        ],
+    )]
     public function update(Faction $toUpdate, Request $request): JsonResponse
     {
         $changes = json_decode($request->getContent(), true);
